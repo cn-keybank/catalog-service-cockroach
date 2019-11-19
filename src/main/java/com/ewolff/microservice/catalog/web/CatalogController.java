@@ -2,6 +2,8 @@ package com.ewolff.microservice.catalog.web;
 
 import java.util.UUID;
 
+import co.elastic.apm.api.CaptureSpan;
+import co.elastic.apm.api.CaptureTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -25,11 +27,13 @@ public class CatalogController {
 	}
 
 	@RequestMapping(value = "/{id}.html", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	@CaptureSpan("GetOperation")
 	public ModelAndView Item(@PathVariable("id") String id) {
 		return new ModelAndView("item", "item", itemRepository.findById(id).get());
 	}
 
 	@RequestMapping("/list.html")
+	@CaptureTransaction(type = "Task", value = "CatalogList")
 	public ModelAndView ItemList() {
 		return new ModelAndView("itemlist", "items", itemRepository.findAll());
 	}
@@ -40,6 +44,7 @@ public class CatalogController {
 	}
 
 	@RequestMapping(value = "/form.html", method = RequestMethod.POST)
+	@CaptureTransaction(type = "Task", value = "CatalogAdd")
 	public ModelAndView post(Item Item) {
 		Item.setId(UUID.randomUUID().toString());
 		Item = itemRepository.save(Item);
@@ -47,6 +52,7 @@ public class CatalogController {
 	}
 
 	@RequestMapping(value = "/{id}.html", method = RequestMethod.PUT)
+	@CaptureSpan("UpdateOperation")
 	public ModelAndView put(@PathVariable("id") String id, Item item) {
 		if(id == null || id.equalsIgnoreCase("null")) {
 			item.setId(UUID.randomUUID().toString());
@@ -61,12 +67,14 @@ public class CatalogController {
 	}
 
 	@RequestMapping(value = "/searchByName.html", produces = MediaType.TEXT_HTML_VALUE)
+	@CaptureSpan("SearchOperation")
 	public ModelAndView search(@RequestParam("query") String query) {
 		return new ModelAndView("itemlist", "items",
 				itemRepository.findByNameContaining(query));
 	}
 
 	@RequestMapping(value = "/{id}.html", method = RequestMethod.DELETE)
+	@CaptureTransaction(type = "Task", value = "CatalogDelete")
 	public ModelAndView delete(@PathVariable("id") String id) {
 		itemRepository.deleteById(id);
 		return new ModelAndView("success");
