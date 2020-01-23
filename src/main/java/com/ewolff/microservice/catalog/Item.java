@@ -1,8 +1,9 @@
 package com.ewolff.microservice.catalog;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -13,22 +14,22 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class Item {
 
 	@Id
-	@GeneratedValue
 	private String id;
 
 	@Column(nullable = false)
 	private String name;
 
 	@Column(nullable = false)
-	private double price;
+	private BigDecimal price;
 
 	public Item() {
 		super();
 		//id = "0";
 	}
 
-	public Item(String name, double price) {
+	public Item(String id, String name, BigDecimal price) {
 		super();
+		this.id = id;
 		this.name = name;
 		this.price = price;
 	}
@@ -41,11 +42,11 @@ public class Item {
 		this.name = name;
 	}
 
-	public double getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(double price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
