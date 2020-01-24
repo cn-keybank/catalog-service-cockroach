@@ -13,3 +13,4 @@ options:
 #    - 'APP_NAME=catalog-service'
 #    - 'PROJECT_ID=terraform-demo-236519'
 #    - 'TAG=1'
+#    - Sample
